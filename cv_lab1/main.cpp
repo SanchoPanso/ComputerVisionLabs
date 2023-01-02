@@ -42,7 +42,7 @@ int main() {
 //    cv::Mat main_background(height, width, CV_8UC3, cv::Scalar(0, 128, 128));
 //    cv::imwrite("main_background.jpg", main_background);
 
-    cv::Mat main_background = cv::imread("..\\main_background.jpg");
+    cv::Mat main_background = cv::imread("..\\cv_lab1\\main_background.jpg");
     int height = main_background.rows;
     int width = main_background.cols;
     cv::Mat additional_background(height, width, CV_8UC3, bg_color);
