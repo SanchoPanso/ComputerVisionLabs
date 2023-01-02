@@ -4,11 +4,11 @@
 #include <opencv2/core/hal/interface.h>
 #include <opencv2/imgproc.hpp>
 
-#include <chrono>
-#include <thread>
-
 #include <iostream>
 #include <cmath>
+
+#define MAIN_BACKGROUND_PATH "..\\cv_lab1\\main_background.jpg"
+#define RESULT_PATH "..\\cv_lab1\\result.jpg"
 
 
 void add_weighted(cv::Mat &src1, cv::Mat &src2, double alpha, cv::Mat &dst) {
@@ -29,9 +29,6 @@ void add_weighted(cv::Mat &src1, cv::Mat &src2, double alpha, cv::Mat &dst) {
 
 int main() {
 
-//    int height = 600;
-//    int width = 600;
-
     double freq = 0.05;
     double amplitude = 20;
 
@@ -39,10 +36,7 @@ int main() {
     cv::Scalar obj_color(0,255,0);
     cv::Scalar bg_color(255, 0, 0);
 
-//    cv::Mat main_background(height, width, CV_8UC3, cv::Scalar(0, 128, 128));
-//    cv::imwrite("main_background.jpg", main_background);
-
-    cv::Mat main_background = cv::imread("..\\cv_lab1\\main_background.jpg");
+    cv::Mat main_background = cv::imread(MAIN_BACKGROUND_PATH);
     int height = main_background.rows;
     int width = main_background.cols;
     cv::Mat additional_background(height, width, CV_8UC3, bg_color);
@@ -75,12 +69,13 @@ int main() {
 
         // Press Esc - end
         if (cv::waitKey(5) == 27){
-            cv::imwrite("result.jpg", img);
-            break;}
+            cv::imwrite(RESULT_PATH, img);
+            break;
+        }
 
         // if object is on center - end
         if (max_col > width / 2){
-            cv::imwrite("result.jpg", img);
+            cv::imwrite(RESULT_PATH, img);
             break;
         }
     }

@@ -9,6 +9,7 @@
 
 #include "TickMeter.h"
 
+#define SOURCE_IMAGE_PATH "../cv_lab2/lenna.png"
 
 cv::Mat blur(cv::Mat &src, cv::Size ksize);
 cv::Mat gauss_unsharp_mask(cv::Mat &src, cv::Size gauss_ksize);
@@ -28,12 +29,9 @@ cv::Mat get_roi_with_border_reflect101(cv::Mat &src, int x, int y, cv::Size ksiz
 
 int main() {
 
-    cv::Mat img = cv::imread("../lenna.png");
+    cv::Mat img = cv::imread(SOURCE_IMAGE_PATH);
     cv::resize(img, img, cv::Size(400, 400));
 
-    // cv::Mat img(100, 100, CV_8UC3, cv::Scalar(255, 0, 0));
-    // cv::rectangle(img, cv::Point(25, 25), cv::Point(75, 75), cv::Scalar(0, 0, 255), -1);
-    
     // Task 1
     
     // Blur image with custom function by 3x3 kernel
@@ -109,41 +107,6 @@ int main() {
     cv::imshow("laplace_unsharp_img", laplace_unsharp_img);
     cv::waitKey(0);
     cv::destroyAllWindows();
-
-
-    // TickMeter tick_meter;
-
-    // // cv::Mat img = cv::imread("../lenna.png");
-    // cv::Mat img(100, 100, CV_8UC3, cv::Scalar(255, 0, 0));
-    // cv::rectangle(img, cv::Point(2, 2), cv::Point(10, 10), cv::Scalar(0, 0, 255), -1);
-    // cv::rectangle(img, cv::Point(90, 90), cv::Point(98, 98), cv::Scalar(0, 0, 255), -1);
-
-    // auto roi1 = get_roi_with_border_reflect101(img, 0, 0, cv::Size(51, 51));
-    // auto roi2 = get_roi_with_border_reflect101(img, 99, 99, cv::Size(51, 51));
-
-    // tick_meter.start();
-    // auto blurred = blur(img, cv::Size(5, 5));
-    // tick_meter.stop();
-    // std::cout << tick_meter.getTimeTicks() << '\n';
-    // tick_meter.reset();
-
-    // auto unsharp_masked = unsharp_mask(blurred, cv::Size(5, 5));
-    // auto blur_diff = get_diff_image(img, blurred);
-    // auto blur_diff_log = logarithmic_transform(blur_diff, 5.0);
-    // auto laplaced = laplace(blurred, 0.3);
-
-    // std::cout << get_diff_percentage(unsharp_masked, blurred) << std::endl;
-
-    // imshow("img", img);
-    // imshow("roi1", roi1);
-    // imshow("roi2", roi2);
-    // imshow("blurred", blurred);
-    // imshow("unsharp_masked", unsharp_masked);
-    // imshow("blur_diff", blur_diff);
-    // imshow("blur_diff_log", blur_diff_log);
-    // imshow("laplaced", laplaced);
-
-    // cv::waitKey(0);
 
     return 0;
 }

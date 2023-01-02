@@ -2,7 +2,6 @@
 #include <cmath>
 #include <vector>
 
-//#include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
@@ -10,14 +9,18 @@
 #include <opencv2/imgproc.hpp>
 #include "cvDirectory.h"
 
+#define IMG_ZADAN_PATH      "..\\cv_lab3\\img_zadan\\"
+
+#define TASK_1_IMAGE_DIR    IMG_ZADAN_PATH"allababah\\"
+#define TASK_2_IMAGE_DIR    IMG_ZADAN_PATH"teplovizor\\"
+#define TASK_3_IMAGE_DIR    IMG_ZADAN_PATH"roboti\\"
+#define TASK_4_IMAGE_DIR    IMG_ZADAN_PATH"gk\\"
+
 
 struct Area {
     std::vector<cv::Point> contour;
     cv::Point center;
-    Area(std::vector<cv::Point> contour, cv::Point center) {
-        this->contour = contour;
-        this->center = center;
-    }
+    Area(std::vector<cv::Point> contour, cv::Point center);
 };
 
 void task1();
@@ -25,41 +28,57 @@ void task2();
 void task3();
 void task4();
 
-cv::Point find_lamp_center(cv::Mat &img, cv::Scalar lamp_lower = cv::Scalar(0, 0, 200), cv::Scalar lamp_upper = cv::Scalar(180, 10, 255));
-
-void draw_ares_centers(cv::Mat &img, std::vector<Area> areas);
+cv::Point find_lamp_center(cv::Mat &img, 
+                           cv::Scalar lamp_lower = cv::Scalar(0, 0, 200), 
+                           cv::Scalar lamp_upper = cv::Scalar(180, 10, 255));
 std::vector<Area> get_area_centers(cv::Mat &img,
                                    cv::Mat &mask,
                                    cv::Scalar lower = cv::Scalar(0, 0, 100),
                                    cv::Scalar upper = cv::Scalar(50, 255, 255), 
                                    double contour_area_thresh = 50.0);
+void draw_ares_centers(cv::Mat &img, std::vector<Area> areas);
 
 
 int main(int, char**) {
-    // std::cout << "Hello, world!\n";
-
+    
+    task1();
+    task2();
+    task3();
     task4();
+
+    return 0;
 }
 
 
+Area::Area(std::vector<cv::Point> contour, cv::Point center) {
+        this->contour = contour;
+        this->center = center;
+}
+
 
 void task1() {
-    std::string image_dir = "C:\\Users\\HP\\Downloads\\LAB3\\img_zadan\\allababah\\";
+    std::string image_dir = std::string(TASK_1_IMAGE_DIR);
     std::vector<std::string> fnms = cv::Directory::GetListFiles(image_dir, std::string("*.jpg"), false);
 
     for (auto & fnm : fnms) {
         cv::Mat img = cv::imread(image_dir + fnm);
+
+        cv::Scalar lower(0, 0, 200);
+        cv::Scalar upper(180, 255, 255);
+
         cv::Mat mask(img.rows, img.cols, CV_8U);
-        auto areas = get_area_centers(img, mask);
+        auto areas = get_area_centers(img, mask, lower, upper);
         draw_ares_centers(img, areas);
         cv::imshow("img", img);
         cv::waitKey();
     }
+
+    cv::destroyAllWindows();
 }
 
 
 void task2() {
-    std::string image_dir = "C:\\Users\\HP\\Downloads\\LAB3\\img_zadan\\teplovizor\\";
+    std::string image_dir = std::string(TASK_2_IMAGE_DIR);
     std::vector<std::string> fnms = cv::Directory::GetListFiles(image_dir, std::string("*.jpg"), false);
 
     for (auto & fnm : fnms) {
@@ -70,11 +89,13 @@ void task2() {
         cv::imshow("img", img);
         cv::waitKey();
     }
+
+    cv::destroyAllWindows();
 }
 
 
 void task3() {
-    std::string image_dir = "C:\\Users\\HP\\Downloads\\LAB3\\img_zadan\\roboti\\";
+    std::string image_dir = std::string(TASK_3_IMAGE_DIR);
     std::vector<std::string> fnms = cv::Directory::GetListFiles(image_dir, std::string("*.jpg"), false);
     std::vector<std::vector<cv::Scalar>> team_colors_ranges = {
         {{0, 0, 10}, {10, 255, 255}},
@@ -128,11 +149,12 @@ void task3() {
         cv::imshow("vis_img", vis_img);
         cv::waitKey();
     }
+    cv::destroyAllWindows();
 }
 
 void task4() {
-    std::string image_path = "C:\\Users\\HP\\Downloads\\LAB3\\img_zadan\\gk\\gk.jpg";
-    std::string template_path = "C:\\Users\\HP\\Downloads\\LAB3\\img_zadan\\gk\\gk_tmplt.jpg";
+    std::string image_path = std::string(TASK_4_IMAGE_DIR) + std::string("gk.jpg");
+    std::string template_path = std::string(TASK_4_IMAGE_DIR) + std::string("gk_tmplt.jpg");
 
     cv::Mat img = cv::imread(image_path, cv::IMREAD_COLOR);
     cv::Mat tmplt = cv::imread(template_path, cv::IMREAD_GRAYSCALE);
@@ -177,6 +199,8 @@ void task4() {
 
     cv::imshow("img", img);
     cv::waitKey();
+
+    cv::destroyAllWindows();
 }
 
 
@@ -215,15 +239,10 @@ std::vector<Area> get_area_centers(cv::Mat &img,
     cv::Mat img_hsv(img.rows, img.cols, CV_8UC3);
 
     cv::cvtColor(img, img_hsv, cv::COLOR_BGR2HSV);
-    // cv::threshold(binary, binary, 210, 255, cv::THRESH_BINARY);
-    
     cv::inRange(img_hsv, lower, upper, mask);
 
     auto kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
     cv::morphologyEx(mask, mask, cv::MORPH_CLOSE, kernel);
-
-    // cv::imshow("mask", mask);
-    // cv::waitKey(0);
     
     std::vector<std::vector<cv::Point>> contours; 
     cv::findContours(mask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
