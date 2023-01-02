@@ -11,6 +11,7 @@
 
 #define SOURCE_IMAGE_PATH "../cv_lab2/lenna.png"
 
+
 cv::Mat blur(cv::Mat &src, cv::Size ksize);
 cv::Mat gauss_unsharp_mask(cv::Mat &src, cv::Size gauss_ksize);
 cv::Mat box_unsharp_mask(cv::Mat &src, cv::Size ksize);
@@ -32,8 +33,7 @@ int main() {
     cv::Mat img = cv::imread(SOURCE_IMAGE_PATH);
     cv::resize(img, img, cv::Size(400, 400));
 
-    // Task 1
-    
+    // Task 1    
     // Blur image with custom function by 3x3 kernel
     auto custom_blur_img = blur(img, cv::Size(3, 3));
     
@@ -49,11 +49,11 @@ int main() {
     cv::blur(img, opencv_blur_img, cv::Size(3, 3));
     auto blur_diff_img = get_diff_image(opencv_blur_img, custom_blur_img);
 
-    std::cout << get_diff_percentage(custom_blur_img, opencv_blur_img) << std::endl;
+    std::cout << "Difference: " << get_diff_percentage(custom_blur_img, opencv_blur_img) << "%" << std::endl;
 
     cv::imshow("opencv_blur_img", opencv_blur_img);
     cv::imshow("custom_blur_img", custom_blur_img);
-    cv::imshow("blur_diff_img", blur_diff_img);
+    cv::imshow("blur_diff_img", logarithmic_transform(blur_diff_img, 20));
     cv::waitKey(0);
     cv::destroyAllWindows();
 
@@ -63,13 +63,13 @@ int main() {
     tick_meter.start();
     auto custom_blur_img_tmp = blur(img, cv::Size(3, 3));
     tick_meter.stop();
-    std::cout << tick_meter.getTimeTicks() << '\n';
+    std::cout << "Custom blur ticks: " << tick_meter.getTimeTicks() << '\n';
     tick_meter.reset();
 
     tick_meter.start();
     cv::blur(img, opencv_blur_img, cv::Size(3, 3));
     tick_meter.stop();
-    std::cout << tick_meter.getTimeTicks() << '\n';
+    std::cout << "OpenCV blur ticks: " << tick_meter.getTimeTicks() << '\n';
     tick_meter.reset();
 
     // Task 4
@@ -110,7 +110,6 @@ int main() {
 
     return 0;
 }
-
 
 
 cv::Mat blur(cv::Mat &src, cv::Size ksize) {
