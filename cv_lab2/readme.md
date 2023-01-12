@@ -17,13 +17,28 @@
 Для реализации свертки использовалась ОИ. В качестве типа границы выбран BORDER_REFLECT101. Исходное изображение - lenna.png.
 
 1.	Работа собственной функции box-фильтра 3х3
+
 ![img](./images/img.jpg)
+
+<p style="text-align: center;">img</p>
+
 ![custom_blur_img](./images/custom_blur_img.jpg)
 
+<p style="text-align: center;">custom_blur_img</p>
+
 2.	Проверка работы фильтра сглаживания (схожесть: 99.731%)
+
 ![opencv_blur_img](./images/opencv_blur_img.jpg)
+
+<p style="text-align: center;">opencv_blur_img</p>
+
 ![custom_blur_img](./images/custom_blur_img.jpg)
+
+<p style="text-align: center;">custom_blur_img</p>
+
 ![blur_diff_img](./images/blur_diff_img.jpg)
+
+<p style="text-align: center;">blur_diff_img</p>
 
 
 3.	Время работы:
@@ -31,14 +46,32 @@ Custom blur ticks: 1885289
 OpenCV blur ticks: 2637 
 
 4.	Сравнение сглаживания по Гауссу и Box фильтра.
+
 ![opencv_blur_img](./images/opencv_blur_img.jpg)
+
+<p style="text-align: center;">opencv_blur_img</p>
+
 ![opencv_gaussian_blur_img](./images/opencv_gaussian_blur_img.jpg)
+
+<p style="text-align: center;">opencv_gaussian_blur_img</p>
+
 ![gaussian_box_diff_img](./images/gaussian_box_diff_img.jpg)
 
+<p style="text-align: center;">gaussian_box_diff_img</p>
+
 5.	Сравнение unsharp mask с фильтром Гаусса и Box фильтром. 
+
 ![gauss_unsharp_img](./images/gauss_unsharp_img.jpg)
+
+<p style="text-align: center;">gauss_unsharp_img</p>
+
 ![box_unsharp_img](./images/box_unsharp_img.jpg)
+
+<p style="text-align: center;">box_unsharp_img</p>
+
 ![diff_img](./images/diff_img.jpg)
+
+<p style="text-align: center;">diff_img</p>
 
 6.	Фильтр Лапласа.
  ![laplace_img](./images/laplace_img.jpg)
