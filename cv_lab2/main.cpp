@@ -104,7 +104,16 @@ int main() {
 
     // Task 7
     auto laplace_unsharp_img = laplace_unsharp_mask(img);
+    
+    auto gauss_laplace_diff_img = get_diff_image(gauss_unsharp_img, laplace_unsharp_img);
+    gauss_laplace_diff_img = logarithmic_transform(gauss_laplace_diff_img, 10);
+    
+    auto box_laplace_diff_img = get_diff_image(box_unsharp_img, laplace_unsharp_img);
+    box_laplace_diff_img = logarithmic_transform(box_laplace_diff_img, 10);
+    
     cv::imshow("laplace_unsharp_img", laplace_unsharp_img);
+    cv::imshow("box_laplace_diff_img", box_laplace_diff_img);
+    cv::imshow("gauss_laplace_diff_img", gauss_laplace_diff_img);
     cv::waitKey(0);
     cv::destroyAllWindows();
 

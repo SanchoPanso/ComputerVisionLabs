@@ -11,3 +11,39 @@
 6.	Реализовать фильтр Лапласа (руками, свой). Вывести результат. 
 
 7.	Реализовать unsharp mask с фильтром Лапласа. Вывести результат и сравнить с п.5.
+
+# Отчет
+
+Для реализации свертки использовалась ОИ. В качестве типа границы выбран BORDER_REFLECT101. Исходное изображение - lenna.png.
+
+1.	Работа собственной функции box-фильтра 3х3
+![img](./images/img.jpg)
+![custom_blur_img](./images/custom_blur_img.jpg)
+
+2.	Проверка работы фильтра сглаживания (схожесть: 99.731%)
+![opencv_blur_img](./images/opencv_blur_img.jpg)
+![custom_blur_img](./images/custom_blur_img.jpg)
+![blur_diff_img](./images/blur_diff_img.jpg)
+
+
+3.	Время работы:
+Custom blur ticks: 1885289
+OpenCV blur ticks: 2637 
+
+4.	Сравнение сглаживания по Гауссу и Box фильтра.
+![opencv_blur_img](./images/opencv_blur_img.jpg)
+![opencv_gaussian_blur_img](./images/opencv_gaussian_blur_img.jpg)
+![gaussian_box_diff_img](./images/gaussian_box_diff_img.jpg)
+
+5.	Сравнение unsharp mask с фильтром Гаусса и Box фильтром. 
+![gauss_unsharp_img](./images/gauss_unsharp_img.jpg)
+![box_unsharp_img](./images/box_unsharp_img.jpg)
+![diff_img](./images/diff_img.jpg)
+
+6.	Фильтр Лапласа.
+ ![laplace_img](./images/laplace_img.jpg)
+
+7.	Unsharp mask с фильтром Лапласа и сравнение с п.5.
+![laplace_unsharp_img](./images/laplace_unsharp_img.jpg)
+![box_laplace_diff_img](./images/box_laplace_diff_img.jpg)
+![gauss_laplace_diff_img](./images/gauss_laplace_diff_img.jpg)
