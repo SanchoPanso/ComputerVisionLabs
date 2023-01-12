@@ -71,6 +71,8 @@ void task1() {
         draw_ares_centers(img, areas);
         cv::imshow("img", img);
         cv::waitKey();
+
+        cv::imwrite("task_1.jpg", img);
     }
 
     cv::destroyAllWindows();
@@ -88,6 +90,8 @@ void task2() {
         draw_ares_centers(img, areas);
         cv::imshow("img", img);
         cv::waitKey();
+
+        cv::imwrite("task_2.jpg", img);
     }
 
     cv::destroyAllWindows();
@@ -148,6 +152,8 @@ void task3() {
 
         cv::imshow("vis_img", vis_img);
         cv::waitKey();
+
+        cv::imwrite("task_3.jpg", vis_img);
     }
     cv::destroyAllWindows();
 }
@@ -199,6 +205,8 @@ void task4() {
 
     cv::imshow("img", img);
     cv::waitKey();
+
+    cv::imwrite("task_4.jpg", img);
 
     cv::destroyAllWindows();
 }
