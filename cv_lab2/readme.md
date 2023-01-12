@@ -14,69 +14,146 @@
 
 # Отчет
 
-Для реализации свертки использовалась ОИ. В качестве типа границы выбран BORDER_REFLECT101. Исходное изображение - lenna.png.
+Исходное изображение - lenna.png. Фильтрация изображения происходит с помощью функций, которые оборачивают функцию `filter_2D_int32`:
+```
+void filter2D_int32(cv::Mat &src, cv::Mat &dst, cv::Mat &kernel);
+```
+В ней для каждого пикселя исходного изображения вызывается следующая функция:
+```
+void convolve(cv::Mat &src, cv::Mat &dst, cv::Mat &kernel, int x, int y);
+```
+В ней вычисляется новое, свернутое значение пикселя на основе ядра свертки `kernel`. Для нахождения участка изображения для свертки используется обращение к ROI в функции:
+```
+cv::Mat get_roi_with_border_reflect101(cv::Mat &src, int x, int y, cv::Size ksize);
+```
+Когда ROI взять невозможно возле границы, то находятся донорные пиксели, потому что для обработки границ выбран тип BORDER_REFLECT101. Индексы этих пикселей находятся с помощью функции:
+```
+int find_reflected101_index(int orig_idx, int boundary_idx);
+``` 
+Все функции, использующие обход пикселей изображения, использует обход с помощью указателей. Например, так:
+```
+for (int y = 0; y < img1.rows; y++) {
+        auto p1 = img1.ptr<uchar>(y);
+        auto p2 = img2.ptr<uchar>(y);
+
+        for (int x = 0; x < img1.cols; x++) {
+            for (int channel = 0; channel < num_of_channels; channel++) {
+                auto value1 = p1[x * num_of_channels + channel];
+                auto value2 = p2[x * num_of_channels + channel];
+                if (value1 == value2) {
+                    sum_of_matches++;
+                }
+            }
+        }
+    }
+``` 
+
+Результаты работы программы.
 
 1.	Работа собственной функции box-фильтра 3х3
 
-![img](./images/img.jpg)
+<div align="center">
+  <img src="./images/img.jpg"/>
+ <br/>
+ img
+</div>
 
-<p style="text-align: center;">img</p>
-
-![custom_blur_img](./images/custom_blur_img.jpg)
-
-<p style="text-align: center;">custom_blur_img</p>
+<div align="center">
+  <img src="./images/custom_blur_img.jpg"/>
+ <br/>
+ custom_blur_img
+</div>
 
 2.	Проверка работы фильтра сглаживания (схожесть: 99.731%)
 
-![opencv_blur_img](./images/opencv_blur_img.jpg)
+<div align="center">
+  <img src="./images/opencv_blur_img.jpg"/>
+ <br/>
+ opencv_blur_img
+</div>
 
-<p style="text-align: center;">opencv_blur_img</p>
+<div align="center">
+  <img src="./images/custom_blur_img.jpg"/>
+ <br/>
+ custom_blur_img
+</div>
 
-![custom_blur_img](./images/custom_blur_img.jpg)
-
-<p style="text-align: center;">custom_blur_img</p>
-
-![blur_diff_img](./images/blur_diff_img.jpg)
-
-<p style="text-align: center;">blur_diff_img</p>
-
+<div align="center">
+  <img src="./images/blur_diff_img.jpg"/>
+ <br/>
+ blur_diff_img
+</div>
 
 3.	Время работы:
+
 Custom blur ticks: 1885289
+
 OpenCV blur ticks: 2637 
 
 4.	Сравнение сглаживания по Гауссу и Box фильтра.
 
-![opencv_blur_img](./images/opencv_blur_img.jpg)
+<div align="center">
+  <img src="./images/opencv_blur_img.jpg"/>
+ <br/>
+ opencv_blur_img
+</div>
 
-<p style="text-align: center;">opencv_blur_img</p>
+<div align="center">
+  <img src="./images/opencv_gaussian_blur_img.jpg"/>
+ <br/>
+ opencv_gaussian_blur_img
+</div>
 
-![opencv_gaussian_blur_img](./images/opencv_gaussian_blur_img.jpg)
-
-<p style="text-align: center;">opencv_gaussian_blur_img</p>
-
-![gaussian_box_diff_img](./images/gaussian_box_diff_img.jpg)
-
-<p style="text-align: center;">gaussian_box_diff_img</p>
+<div align="center">
+  <img src="./images/gaussian_box_diff_img.jpg"/>
+ <br/>
+ gaussian_box_diff_img
+</div>
 
 5.	Сравнение unsharp mask с фильтром Гаусса и Box фильтром. 
 
-![gauss_unsharp_img](./images/gauss_unsharp_img.jpg)
+<div align="center">
+  <img src="./images/gauss_unsharp_img.jpg"/>
+ <br/>
+ gauss_unsharp_img
+</div>
 
-<p style="text-align: center;">gauss_unsharp_img</p>
+<div align="center">
+  <img src="./images/box_unsharp_img.jpg"/>
+ <br/>
+ box_unsharp_img
+</div>
 
-![box_unsharp_img](./images/box_unsharp_img.jpg)
-
-<p style="text-align: center;">box_unsharp_img</p>
-
-![diff_img](./images/diff_img.jpg)
-
-<p style="text-align: center;">diff_img</p>
+<div align="center">
+  <img src="./images/diff_img.jpg"/>
+ <br/>
+ diff_img
+</div>
 
 6.	Фильтр Лапласа.
- ![laplace_img](./images/laplace_img.jpg)
 
+<div align="center">
+  <img src="./images/laplace_img.jpg"/>
+ <br/>
+ laplace_img
+</div>
+ 
 7.	Unsharp mask с фильтром Лапласа и сравнение с п.5.
-![laplace_unsharp_img](./images/laplace_unsharp_img.jpg)
-![box_laplace_diff_img](./images/box_laplace_diff_img.jpg)
-![gauss_laplace_diff_img](./images/gauss_laplace_diff_img.jpg)
+
+<div align="center">
+  <img src="./images/laplace_unsharp_img.jpg"/>
+ <br/>
+ laplace_unsharp_img
+</div>
+
+<div align="center">
+  <img src="./images/box_laplace_diff_img.jpg"/>
+ <br/>
+ box_laplace_diff_img
+</div>
+
+<div align="center">
+  <img src="./images/gauss_laplace_diff_img.jpg"/>
+ <br/>
+ gauss_laplace_diff_img
+</div>
