@@ -10,6 +10,7 @@
 #define MAIN_BACKGROUND_PATH "..\\cv_lab1\\main_background.jpg"
 #define RESULT_PATH "..\\cv_lab1\\result.jpg"
 
+// #define M_PI 3.14
 
 void add_weighted(cv::Mat &src1, cv::Mat &src2, double alpha, cv::Mat &dst) {
 
@@ -57,7 +58,7 @@ int main() {
         int max_row = height / 2 + (int) (amplitude * sin(freq * max_col));
         cv::RotatedRect rot_rect(cv::Point(max_col, max_row),
                                  cv::Size(20, 20),
-                                 amplitude * freq * cos(freq * max_col) * 180 / M_PI);
+                                 amplitude * freq * cos(freq * max_col) * 180 / 3.14);
 
         // Draw rotated rectangle
         cv::Point2f vertices[4];

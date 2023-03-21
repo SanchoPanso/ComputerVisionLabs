@@ -19,7 +19,7 @@ cv::Mat laplace(cv::Mat &src);
 cv::Mat laplace_unsharp_mask(cv::Mat &src, double sharp_coef = 1.0);
 cv::Mat logarithmic_transform(cv::Mat &src, double c = 1.0);
 
-double get_diff_percentage(cv::Mat &img1, cv::Mat &img2);
+double getSimilarityPercentage(cv::Mat &img1, cv::Mat &img2);
 cv::Mat get_diff_image(cv::Mat &img1, cv::Mat &img2);
 
 void filter2D_int32(cv::Mat &src, cv::Mat &dst, cv::Mat &kernel);
@@ -33,68 +33,68 @@ int main() {
     cv::Mat img = cv::imread(SOURCE_IMAGE_PATH);
     cv::resize(img, img, cv::Size(400, 400));
 
-    // Task 1    
-    // Blur image with custom function by 3x3 kernel
-    auto custom_blur_img = blur(img, cv::Size(3, 3));
+    // // Task 1    
+    // // Blur image with custom function by 3x3 kernel
+    // auto custom_blur_img = blur(img, cv::Size(3, 3));
     
-    // Show original and gotten images
-    cv::imshow("img", img);
-    cv::imshow("custom_blur_img", custom_blur_img);
-    cv::waitKey(0);
-    cv::destroyAllWindows();
+    // // Show original and gotten images
+    // cv::imshow("img", img);
+    // cv::imshow("custom_blur_img", custom_blur_img);
+    // cv::waitKey(0);
+    // cv::destroyAllWindows();
 
 
-    // Task2
-    cv::Mat opencv_blur_img(img.rows, img.cols, img.type());
-    cv::blur(img, opencv_blur_img, cv::Size(3, 3));
-    auto blur_diff_img = get_diff_image(opencv_blur_img, custom_blur_img);
+    // // Task2
+    // cv::Mat opencv_blur_img(img.rows, img.cols, img.type());
+    // cv::blur(img, opencv_blur_img, cv::Size(3, 3));
+    // auto blur_diff_img = get_diff_image(opencv_blur_img, custom_blur_img);
 
-    std::cout << "Difference: " << get_diff_percentage(custom_blur_img, opencv_blur_img) << "%" << std::endl;
+    // std::cout << "Difference: " << get_diff_percentage(custom_blur_img, opencv_blur_img) << "%" << std::endl;
 
-    cv::imshow("opencv_blur_img", opencv_blur_img);
-    cv::imshow("custom_blur_img", custom_blur_img);
-    cv::imshow("blur_diff_img", logarithmic_transform(blur_diff_img, 20));
-    cv::waitKey(0);
-    cv::destroyAllWindows();
+    // cv::imshow("opencv_blur_img", opencv_blur_img);
+    // cv::imshow("custom_blur_img", custom_blur_img);
+    // cv::imshow("blur_diff_img", logarithmic_transform(blur_diff_img, 20));
+    // cv::waitKey(0);
+    // cv::destroyAllWindows();
 
-    // Task 3
-    TickMeter tick_meter;
+    // // Task 3
+    // TickMeter tick_meter;
     
-    tick_meter.start();
-    auto custom_blur_img_tmp = blur(img, cv::Size(3, 3));
-    tick_meter.stop();
-    std::cout << "Custom blur ticks: " << tick_meter.getTimeTicks() << '\n';
-    tick_meter.reset();
+    // tick_meter.start();
+    // auto custom_blur_img_tmp = blur(img, cv::Size(3, 3));
+    // tick_meter.stop();
+    // std::cout << "Custom blur ticks: " << tick_meter.getTimeTicks() << '\n';
+    // tick_meter.reset();
 
-    tick_meter.start();
-    cv::blur(img, opencv_blur_img, cv::Size(3, 3));
-    tick_meter.stop();
-    std::cout << "OpenCV blur ticks: " << tick_meter.getTimeTicks() << '\n';
-    tick_meter.reset();
+    // tick_meter.start();
+    // cv::blur(img, opencv_blur_img, cv::Size(3, 3));
+    // tick_meter.stop();
+    // std::cout << "OpenCV blur ticks: " << tick_meter.getTimeTicks() << '\n';
+    // tick_meter.reset();
 
-    // Task 4
-    cv::Mat opencv_gaussian_blur_img(img.rows, img.cols, img.type());
-    cv::GaussianBlur(img, opencv_gaussian_blur_img, cv::Size(3, 3), 1);
-    cv::Mat gaussian_box_diff_img = get_diff_image(opencv_gaussian_blur_img, opencv_blur_img); 
-    gaussian_box_diff_img = logarithmic_transform(gaussian_box_diff_img, 10);
+    // // Task 4
+    // cv::Mat opencv_gaussian_blur_img(img.rows, img.cols, img.type());
+    // cv::GaussianBlur(img, opencv_gaussian_blur_img, cv::Size(3, 3), 1);
+    // cv::Mat gaussian_box_diff_img = get_diff_image(opencv_gaussian_blur_img, opencv_blur_img); 
+    // gaussian_box_diff_img = logarithmic_transform(gaussian_box_diff_img, 10);
 
-    cv::imshow("opencv_blur_img", opencv_blur_img);
-    cv::imshow("opencv_gaussian_blur_img", opencv_gaussian_blur_img);
-    cv::imshow("gaussian_box_diff_img", gaussian_box_diff_img);
-    cv::waitKey(0);
-    cv::destroyAllWindows();
+    // cv::imshow("opencv_blur_img", opencv_blur_img);
+    // cv::imshow("opencv_gaussian_blur_img", opencv_gaussian_blur_img);
+    // cv::imshow("gaussian_box_diff_img", gaussian_box_diff_img);
+    // cv::waitKey(0);
+    // cv::destroyAllWindows();
 
-    // Task 5
-    auto gauss_unsharp_img = gauss_unsharp_mask(img, cv::Size(3, 3));
-    auto box_unsharp_img = box_unsharp_mask(img, cv::Size(3, 3));
-    auto diff_img = get_diff_image(gauss_unsharp_img, box_unsharp_img);
-    diff_img = logarithmic_transform(diff_img, 10);
+    // // Task 5
+    // auto gauss_unsharp_img = gauss_unsharp_mask(img, cv::Size(3, 3));
+    // auto box_unsharp_img = box_unsharp_mask(img, cv::Size(3, 3));
+    // auto diff_img = get_diff_image(gauss_unsharp_img, box_unsharp_img);
+    // diff_img = logarithmic_transform(diff_img, 10);
 
-    cv::imshow("gauss_unsharp_img", gauss_unsharp_img);
-    cv::imshow("box_unsharp_img", box_unsharp_img);
-    cv::imshow("diff_img", diff_img);
-    cv::waitKey(0);
-    cv::destroyAllWindows();
+    // cv::imshow("gauss_unsharp_img", gauss_unsharp_img);
+    // cv::imshow("box_unsharp_img", box_unsharp_img);
+    // cv::imshow("diff_img", diff_img);
+    // cv::waitKey(0);
+    // cv::destroyAllWindows();
 
     // Task 6
     auto laplace_img = laplace(img);
@@ -102,20 +102,25 @@ int main() {
     cv::waitKey(0);
     cv::destroyAllWindows();
 
+    cv::imwrite("laplace_img.jpg", laplace_img);
+
     // Task 7
-    auto laplace_unsharp_img = laplace_unsharp_mask(img);
+    cv::imshow("img", img);
+    auto laplace_unsharp_img = laplace_unsharp_mask(img, 2.0);
     
-    auto gauss_laplace_diff_img = get_diff_image(gauss_unsharp_img, laplace_unsharp_img);
-    gauss_laplace_diff_img = logarithmic_transform(gauss_laplace_diff_img, 10);
+    // auto gauss_laplace_diff_img = get_diff_image(gauss_unsharp_img, laplace_unsharp_img);
+    // gauss_laplace_diff_img = logarithmic_transform(gauss_laplace_diff_img, 10);
     
-    auto box_laplace_diff_img = get_diff_image(box_unsharp_img, laplace_unsharp_img);
-    box_laplace_diff_img = logarithmic_transform(box_laplace_diff_img, 10);
+    // auto box_laplace_diff_img = get_diff_image(box_unsharp_img, laplace_unsharp_img);
+    // box_laplace_diff_img = logarithmic_transform(box_laplace_diff_img, 10);
     
     cv::imshow("laplace_unsharp_img", laplace_unsharp_img);
-    cv::imshow("box_laplace_diff_img", box_laplace_diff_img);
-    cv::imshow("gauss_laplace_diff_img", gauss_laplace_diff_img);
+    // cv::imshow("box_laplace_diff_img", box_laplace_diff_img);
+    // cv::imshow("gauss_laplace_diff_img", gauss_laplace_diff_img);
     cv::waitKey(0);
     cv::destroyAllWindows();
+
+    cv::imwrite("laplace_unsharp_img.jpg", laplace_unsharp_img);
 
     return 0;
 }
@@ -193,7 +198,7 @@ cv::Mat logarithmic_transform(cv::Mat &src, double c) {
 }
 
 
-double get_diff_percentage(cv::Mat &img1, cv::Mat &img2) {
+double getSimilarityPercentage(cv::Mat &img1, cv::Mat &img2) {
 
     int num_of_channels = img1.channels();
     int sum_of_matches = 0;
@@ -264,6 +269,11 @@ cv::Mat laplace(cv::Mat &src) {
                               0, 1, 0};
     cv::Mat kernel(3, 3, CV_32S, kernel_data);
     filter2D_int32(src, laplaced, kernel);
+    //cv::medianBlur(laplaced, laplaced, 3);
+    cv::threshold(laplaced, laplaced, 20, 255, cv::THRESH_TOZERO);
+    cv::blur(laplaced, laplaced, cv::Size(3, 3));
+    
+    //cv::threshold(laplaced, laplaced, 150, 255, cv::THRESH_TOZERO);
     
     return laplaced;
 }
@@ -271,6 +281,7 @@ cv::Mat laplace(cv::Mat &src) {
 
 cv::Mat laplace_unsharp_mask(cv::Mat &src, double sharp_coef) {
 
+    //cv::GaussianBlur(src, src, cv::Size(3, 3), 1);
     cv::Mat laplaced = laplace(src);
 
     cv::Mat double_laplaced;
@@ -278,7 +289,12 @@ cv::Mat laplace_unsharp_mask(cv::Mat &src, double sharp_coef) {
     cv::Mat weighted_double_laplaced = sharp_coef * double_laplaced;
     weighted_double_laplaced.convertTo(laplaced, CV_8UC3);
 
-    cv::Mat dst = src - laplaced;
+    cv::Mat dst = src - laplaced; 
+
+    // auto k = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+    // cv::morphologyEx(dst,dst, cv::MORPH_CLOSE, k);
+    
+
     return dst;
 }
 

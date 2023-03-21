@@ -28,9 +28,12 @@ void task2();
 void task3();
 void task4();
 
+cv::Mat task_3_image_processing(cv::Mat &img);
+void task_3_video();
+
 cv::Point find_lamp_center(cv::Mat &img, 
-                           cv::Scalar lamp_lower = cv::Scalar(0, 0, 200), 
-                           cv::Scalar lamp_upper = cv::Scalar(180, 10, 255));
+                           cv::Scalar lamp_lower = cv::Scalar(0, 0, 230), 
+                           cv::Scalar lamp_upper = cv::Scalar(180, 3, 255));
 std::vector<Area> get_area_centers(cv::Mat &img,
                                    cv::Mat &mask,
                                    cv::Scalar lower = cv::Scalar(0, 0, 100),
@@ -41,10 +44,10 @@ void draw_ares_centers(cv::Mat &img, std::vector<Area> areas);
 
 int main(int, char**) {
     
-    task1();
-    task2();
-    task3();
-    task4();
+    //task1();
+    //task2();
+    task_3_video();
+    //task4();
 
     return 0;
 }
@@ -101,10 +104,49 @@ void task2() {
 void task3() {
     std::string image_dir = std::string(TASK_3_IMAGE_DIR);
     std::vector<std::string> fnms = cv::Directory::GetListFiles(image_dir, std::string("*.jpg"), false);
+
+    for (auto & fnm : fnms) {
+        cv::Mat img = cv::imread(image_dir + fnm);
+        task_3_image_processing(img);
+        cv::waitKey();
+    }
+    cv::destroyAllWindows();
+}
+
+void task_3_video() {
+    std::string video_path = std::string("C:\\Users\\HP\\Downloads\\Robot Swarm - University of Sheffield (HD) (online-video-cutter.com).mp4");
+    cv::VideoCapture cap(video_path);
+
+    int frame_width = int(cap.get(3));
+    int frame_height = int(cap.get(4));
+
+    cv::Size frame_size(frame_width, frame_height);
+    cv::VideoWriter writer("C:\\Users\\HP\\Downloads\\LAB3\\task3.avi", cv::VideoWriter::fourcc('M','J','P','G'), 20, frame_size);
+    cv::Mat img;
+    cv::Mat vis_img;
+
+    while(cap.isOpened()) {
+        cap.read(img);
+        vis_img = task_3_image_processing(img);
+        writer.write(vis_img);
+
+        cv::imshow("img", vis_img);
+        char p = cv::waitKey(1);
+
+        if (p == 27) {
+            break;
+        }
+
+    }
+    cap.release();
+}
+
+cv::Mat task_3_image_processing(cv::Mat &img) {
+
     std::vector<std::vector<cv::Scalar>> team_colors_ranges = {
-        {{0, 0, 10}, {10, 255, 255}},
+        {{170, 0, 10}, {180, 255, 255}},//{{0, 50, 40}, {10, 255, 255}}, // {{0, 0, 10}, {10, 255, 255}},
         {{60, 50, 140}, {85, 255, 255}},
-        {{80, 0, 10}, {110, 255, 255}},
+        {{80, 50, 50}, {110, 255, 255}}, // {{80, 0, 10}, {110, 255, 255}},
     }; 
     std::vector<cv::Scalar> team_colors = {
         {0, 0, 255},
@@ -112,50 +154,49 @@ void task3() {
         {255, 0, 0},
     };
 
-    for (auto & fnm : fnms) {
-        cv::Mat img = cv::imread(image_dir + fnm);
-        cv::Mat vis_img = img.clone();
+    cv::Mat vis_img = img.clone();
 
-        cv::Point lamp_center = find_lamp_center(img);
-        cv::rectangle(img, cv::Rect(lamp_center.x - 40, lamp_center.y - 55, 70, 60), cv::Scalar(0, 0, 0), -1);
+    cv::Point lamp_center = find_lamp_center(img);
+    cv::rectangle(img, cv::Rect(lamp_center.x - 40, lamp_center.y - 55, 70, 60), cv::Scalar(0, 0, 0), -1);
 
-        cv::circle(vis_img, lamp_center, 5, cv::Scalar(0, 64, 64), -1);
+    cv::circle(vis_img, lamp_center, 5, cv::Scalar(0, 64, 64), -1);
 
-        for (int i = 0; i < team_colors_ranges.size(); i++) {
-            auto lower = team_colors_ranges[i][0];
-            auto upper = team_colors_ranges[i][1];
+    for (int i = 0; i < team_colors_ranges.size(); i++) {
+        auto lower = team_colors_ranges[i][0];
+        auto upper = team_colors_ranges[i][1];
 
-            cv::Mat mask(img.rows, img.cols, CV_8U);
-            auto areas = get_area_centers(img, mask, lower, upper, 100.0);
+        cv::Mat mask(img.rows, img.cols, CV_8U);
+        auto areas = get_area_centers(img, mask, lower, upper, 100.0);
 
-            int nearest_idx = -1;
-            int min_dist = -1;
+        int nearest_idx = -1;
+        int min_dist = -1;
+        
+        for (int j = 0; j < areas.size(); j++) {
+            Area cur_area = areas[j];
             
-            for (int j = 0; j < areas.size(); j++) {
-                Area cur_area = areas[j];
-                
-                double lamp_x = lamp_center.x;
-                double lamp_y = lamp_center.y;
+            double lamp_x = lamp_center.x;
+            double lamp_y = lamp_center.y;
 
-                double robot_x = cur_area.center.x;
-                double robot_y = cur_area.center.y; 
+            double robot_x = cur_area.center.x;
+            double robot_y = cur_area.center.y; 
 
-                double cur_dist = sqrt(pow((robot_x - lamp_x), 2) + pow((robot_y - lamp_y), 2));  
-                if (j == 0 || cur_dist < min_dist) {
-                    min_dist = cur_dist;
-                    nearest_idx = j;
-                }
+            double cur_dist = sqrt(pow((robot_x - lamp_x), 2) + pow((robot_y - lamp_y), 2));  
+            if (j == 0 || cur_dist < min_dist) {
+                min_dist = cur_dist;
+                nearest_idx = j;
             }
-            cv::circle(vis_img, areas[nearest_idx].center, 5, team_colors[i], -1);
-            cv::circle(vis_img, areas[nearest_idx].center, 5, cv::Scalar(0, 0, 0), 1);        
+
+            cv::drawContours(vis_img, std::vector<std::vector<cv::Point>>{areas[j].contour}, 0, team_colors[i], 3);
         }
-
-        cv::imshow("vis_img", vis_img);
-        cv::waitKey();
-
-        cv::imwrite("task_3.jpg", vis_img);
+        if (nearest_idx == -1) {
+            continue;
+        }
+        cv::circle(vis_img, areas[nearest_idx].center, 5, team_colors[i], -1);
+        cv::circle(vis_img, areas[nearest_idx].center, 5, cv::Scalar(0, 0, 0), 1);        
     }
-    cv::destroyAllWindows();
+
+    //cv::imshow("vis_img", vis_img);
+    return vis_img;
 }
 
 void task4() {
@@ -250,7 +291,7 @@ std::vector<Area> get_area_centers(cv::Mat &img,
     cv::inRange(img_hsv, lower, upper, mask);
 
     auto kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
-    cv::morphologyEx(mask, mask, cv::MORPH_CLOSE, kernel);
+    cv::morphologyEx(mask, mask, cv::MORPH_CLOSE, kernel, cv::Point(-1, -1), 1);
     
     std::vector<std::vector<cv::Point>> contours; 
     cv::findContours(mask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);
