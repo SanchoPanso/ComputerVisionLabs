@@ -45,7 +45,15 @@ int main() {
     cv::aruco::Dictionary dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
     
     cv::aruco::ArucoDetector detector(dictionary, detectorParams);
-   
+
+    // Inintialize video writer
+    int frame_width = int(inputVideo.get(3));
+    int frame_height = int(inputVideo.get(4));
+    cv::Size frame_size(frame_width, frame_height);
+    cv::VideoWriter writer("C:\\Users\\HP\\Desktop\\cv_lab5.mp4", 
+                           cv::VideoWriter::fourcc('P','I','M','1'), 
+                           20, frame_size);
+    
     while (inputVideo.grab()) {
         cv::Mat image, imageCopy;
         inputVideo.retrieve(image);
@@ -88,16 +96,21 @@ int main() {
                 for (int j = 0; j < 4; j++) {
                     cv::line(imageCopy, cubePoints2d[j], cubePoints2d[j + 4], cv::Scalar(0, 255, 0), 2);
                 }
-                //cv::drawFrameAxes(imageCopy, cameraMatrix, distCoeffs, rvecs[i], tvecs[i], 0.1);
             }
         }
         // Show resulting image and close window
         cv::imshow("out", imageCopy);
+        
+        // Write image to video
+        writer.write(imageCopy);
+        
+        // If Esc - break
         char key = (char) cv::waitKey(1);
         if (key == 27)
             break;
     }
 
+    inputVideo.release();
     return 0;
 }
 

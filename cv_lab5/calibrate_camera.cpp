@@ -45,7 +45,7 @@ the use of this software, even if advised of the possibility of such damage.
 #include <vector>
 #include <iostream>
 #include <ctime>
-#include "D:\lib\opencv_4.7.0\src\opencv_contrib\modules\aruco\samples\aruco_samples_utility.hpp"
+#include "aruco_samples_utility.hpp"
 
 using namespace std;
 using namespace cv;
