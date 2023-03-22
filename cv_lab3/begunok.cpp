@@ -1,4 +1,4 @@
-#include <opencv2\opencv.hpp>
+#include <opencv2/opencv.hpp>
 #include "cvDirectory.h"
 using namespace cv;
 using namespace std;

@@ -8,6 +8,7 @@
 #include <tchar.h>
 #else
 #include <dirent.h>
+#include <cstring>
 #endif
 
 using namespace std;
