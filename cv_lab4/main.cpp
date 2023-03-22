@@ -111,7 +111,7 @@ double getSimilarityPercentage(cv::Mat &img1, cv::Mat &img2);
 
 
 int main() {
-    task_4();
+    task_5();
     return 0;
 }
 
@@ -232,19 +232,98 @@ void task_4() {
 
 }
 
+
+void task_5() {
+    std::string image_path = "/home/student2/Pictures/Screenshot from 2023-03-22 17-22-43.png";
+    cv::Mat img = cv::imread(image_path, cv::IMREAD_GRAYSCALE);
+    img.convertTo(img, CV_64F);
+
+    cv::Mat img_fourier;
+    cv::dft(img, img_fourier, cv::DFT_COMPLEX_OUTPUT);
+
+    cv::Point center(img.cols / 2, img.rows / 2);
+    cv::Mat mask = cv::Mat::zeros(img.rows, img.cols, CV_8U);
+    cv::circle(mask, center, 50, cv::Scalar(255), -1);
+    cv::Mat mask_inv;
+    cv::bitwise_not(mask, mask_inv);
+
+    cv::Mat high_freq_img_fourier;
+    img_fourier.copyTo(high_freq_img_fourier);
+    krasivSpektr(high_freq_img_fourier);
+    //cv::bitwise_and(img_fourier, img_fourier, low_freq_img_fourier, mask);
+    cv::circle(high_freq_img_fourier, center, 50, cv::Scalar(0), -1);
+    krasivSpektr(high_freq_img_fourier);
+
+    cv::Mat low_freq_img_fourier = img_fourier - high_freq_img_fourier;
+
+    cv::Mat high_freq_img;
+    cv::dft(high_freq_img_fourier, high_freq_img, cv::DFT_REAL_OUTPUT | cv::DFT_INVERSE | cv::DFT_SCALE);
+    high_freq_img.convertTo(high_freq_img, CV_8U);
+
+    cv::Mat low_freq_img;
+    cv::dft(low_freq_img_fourier, low_freq_img, cv::DFT_REAL_OUTPUT | cv::DFT_INVERSE | cv::DFT_SCALE);
+    low_freq_img.convertTo(low_freq_img, CV_8U);
+
+
+    cv::imshow("mask", mask);
+    cv::imshow("high_freq_img_fourier", getPrettyFourier(high_freq_img_fourier));
+    cv::imshow("low_freq_img_fourier", getPrettyFourier(low_freq_img_fourier));
+    cv::imshow("high_freq_img", high_freq_img);
+    cv::imshow("low_freq_img", low_freq_img);
+    
+    cv::waitKey();
+
+}
+
+
 void task_6() {
     // Read image in grayscale and convert to double
-    std::string image_path = "D:\\CodeProjects\\C_CPP_Projects\\ComputerVisionLabs\\cv_lab4\\fftdemo.jpg";
-    std::string sample_path = "D:\\CodeProjects\\C_CPP_Projects\\ComputerVisionLabs\\cv_lab4\\fftdemo.jpg";
+    std::string image_path = "/home/student2/Pictures/Screenshot from 2023-03-22 17-22-43.png";
+    std::string sample_path = "/home/student2/Pictures/Screenshot from 2023-03-22 17-23-02.png";
 
     cv::Mat img = cv::imread(image_path, cv::IMREAD_GRAYSCALE);
     cv::Mat sample = cv::imread(sample_path, cv::IMREAD_GRAYSCALE);
+
+    cv::imshow("img", img);
+    cv::imshow("sample", sample);
+    cv::waitKey();
+
+    cv::Size orig_img_size(img.cols, img.rows);
     
     img.convertTo(img, CV_64F);
     sample.convertTo(sample, CV_64F);
 
-    
+    PrepareForMullSpectrum(img, sample, img, sample);
+    cv::Mat img_fourier;
+    cv::dft(img, img_fourier, cv::DFT_COMPLEX_OUTPUT);
 
+    cv::Mat sample_fourier;
+    cv::dft(sample, sample_fourier, cv::DFT_COMPLEX_OUTPUT);
+
+    cv::Mat correlation_fourier;
+    cv::mulSpectrums(img_fourier, sample_fourier, correlation_fourier, 0, true);
+
+    cv::Mat correlation_img;
+    cv::dft(correlation_fourier, correlation_img, cv::DFT_REAL_OUTPUT | cv::DFT_INVERSE | cv::DFT_SCALE);
+    correlation_img = correlation_img(cv::Rect(0, 0, orig_img_size.width, orig_img_size.height));
+    cv::normalize(correlation_img, correlation_img, 0, 1, cv::NORM_MINMAX);
+
+    double minVal; 
+    double maxVal; 
+    cv::Point minLoc; 
+    cv::Point maxLoc;
+    minMaxLoc(correlation_img, &minVal, &maxVal, &minLoc, &maxLoc);
+
+    double corr_thresh = maxVal - 0.01;
+    cv::Mat threshold_img;
+    cv::threshold(correlation_img, threshold_img, corr_thresh, 255, cv::THRESH_BINARY);
+
+    cv::imshow("img_fourier", getPrettyFourier(img_fourier));
+    cv::imshow("filter_fourier", getPrettyFourier(sample_fourier));
+    cv::imshow("filtered_img_fourier", getPrettyFourier(correlation_fourier));
+    cv::imshow("filtered_img", correlation_img);
+    cv::imshow("threshold_img", threshold_img);
+    cv::waitKey();
 }
 
 void mulSpectrumShow(cv::InputArray orig_img, cv::InputArray filter) {
