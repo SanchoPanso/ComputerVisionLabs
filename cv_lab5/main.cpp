@@ -7,6 +7,9 @@
 #include <opencv2/aruco.hpp>
 #include "aruco_samples_utility.hpp"
 
+#define CALIB_PATH "../cv_lab5/calibration.xml"
+#define VIDEO_SAVE_PATH "C:/Users/HP/Desktop/cv_lab5.mp4"
+
 
 int main() {
 
@@ -17,7 +20,7 @@ int main() {
     float markerLength = 0.05;
     
     // Read camera parameters
-    const char* cameraParamsFilename = "../cv_lab5/calibration.xml";
+    const char* cameraParamsFilename = CALIB_PATH;
     readCameraParameters(cameraParamsFilename, cameraMatrix, distCoeffs); // This function is implemented in aruco_samples_utility.hpp
     
     // Set coordinate system
@@ -50,7 +53,7 @@ int main() {
     int frame_width = int(inputVideo.get(3));
     int frame_height = int(inputVideo.get(4));
     cv::Size frame_size(frame_width, frame_height);
-    cv::VideoWriter writer("C:\\Users\\HP\\Desktop\\cv_lab5.mp4", 
+    cv::VideoWriter writer(VIDEO_SAVE_PATH, 
                            cv::VideoWriter::fourcc('P','I','M','1'), 
                            20, frame_size);
     
