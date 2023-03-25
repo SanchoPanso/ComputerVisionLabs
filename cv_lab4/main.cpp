@@ -11,12 +11,9 @@
 #define FOURIER_DIR "../cv_lab4/images/fourier/"
 #define NUMBER_IMAGE_PATH "../cv_lab4/images/number.jpg"
 #define TEMPLATE_DIR "../cv_lab4/images/templates/"
-#define RESULTS_DIR "../cv_lab4/results/"
 
 
 enum DftFlags {
-    /** performs an inverse 1D or 2D transform instead of the default forward
-        transform. */
     DFT_INVERSE        = 1 << 0,
     
     DFT_COMPLEX_OUTPUT = 0 << 1,
@@ -64,7 +61,7 @@ void dft2D(cv::InputArray src, cv::OutputArray dst, int flag = 0);
  * @param flag operation flags (see #DftFlags).
  * @param w TODO
  */
-void fft1D(cv::InputArray src, cv::OutputArray dst, int flag = 0, cv::InputArray w = cv::noArray());
+void fft1D(cv::InputArray src, cv::OutputArray dst, int flag = 0);
 
 /**
  * @brief Calculates the Fast Fourier Transform of a 2D array.
@@ -588,7 +585,7 @@ int rev(int num, int lg_n) {
 }
 
 
-void fft1D(cv::InputArray src, cv::OutputArray dst, int flag, cv::InputArray w) {
+void fft1D(cv::InputArray src, cv::OutputArray dst, int flag) {
     
     // Input array must be a 1d-array
     if (src.rows() != 1 && src.cols() != 1) {

@@ -26,12 +26,14 @@ add_executable(begunok cv_lab3/begunok.cpp cv_lab3/cvDirectory.cpp)
 target_link_libraries(begunok ${OpenCV_LIBS})
 
 # cv_lab4
-add_executable(cv_lab4 cv_lab4/main.cpp)
+add_executable(cv_lab4 cv_lab4/main.cpp cv_lab4/cvDirectory.cpp cv_lab4/TickMeter.cpp)
 target_link_libraries(cv_lab4 ${OpenCV_LIBS})
 
 # cv_lab5
 add_executable(cv_lab5 cv_lab5/main.cpp)
 target_link_libraries(cv_lab5 ${OpenCV_LIBS})
+add_executable(create_aruco_marker cv_lab5/create_aruco_marker.cpp)
+target_link_libraries(create_aruco_marker ${OpenCV_LIBS})
 add_executable(calibrate_camera cv_lab5/calibrate_camera.cpp)
 target_link_libraries(calibrate_camera ${OpenCV_LIBS})
 
