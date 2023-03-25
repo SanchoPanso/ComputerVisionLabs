@@ -25,14 +25,15 @@ enum DftFlags {
 
 int main();
 
-void task_1();  // dft
-void task_2();  // fft
-void task_3();  // speed
-void task_4();  // conv
-void task_5();  // cut
-void task_6();  // corr
+// Parts of work that executed in main()
+void task_1();  // DFT implementation
+void task_2();  // FFT implementation
+void task_3();  // Speed comparison
+void task_4();  // Convolution with DFT
+void task_5();  // Cutting out of spectrum
+void task_6();  // Correlation
 
-void mulSpectrumShow(cv::InputArray orig_img, cv::InputArray filter, std::string filter_name, std::string file_name);
+void mulSpectrumShow(cv::InputArray orig_img, cv::InputArray filter);
 
 
 /**
@@ -157,7 +158,7 @@ void task_1() {
 
         // Apply inverse dft to get original image 
         cv::Mat custom_inverse_fourier, opencv_inverse_fourier;
-        dft2D(custom_fourier, custom_inverse_fourier, DFT_REAL_OUTPUT | DFT_INVERSE);                   // Custom dft
+        dft2D(custom_fourier, custom_inverse_fourier, DFT_REAL_OUTPUT | DFT_INVERSE);                             // Custom dft
         cv::dft(opencv_fourier, opencv_inverse_fourier, cv::DFT_REAL_OUTPUT | cv::DFT_INVERSE | cv::DFT_SCALE);   // OpenCV dft
 
         custom_inverse_fourier.convertTo(custom_inverse_fourier, CV_8U);
@@ -170,20 +171,19 @@ void task_1() {
         
         std::cout << std::endl;
 
+        // cv::resize(img, img, cv::Size(), 1.5, 1.5);
+        // cv::resize(custom_pretty_fourier, custom_pretty_fourier, cv::Size(), 1.5, 1.5);
+        // cv::resize(opencv_pretty_fourier, opencv_pretty_fourier, cv::Size(), 1.5, 1.5);
+        // cv::resize(custom_inverse_fourier, custom_inverse_fourier, cv::Size(), 1.5, 1.5);
+        // cv::resize(opencv_inverse_fourier, opencv_inverse_fourier, cv::Size(), 1.5, 1.5);
+
         cv::imshow("img", img);
         cv::imshow("custom_fourier", custom_pretty_fourier);
         cv::imshow("opencv_fourier", opencv_pretty_fourier);
         cv::imshow("custom_inverse_fourier", custom_inverse_fourier);
         cv::imshow("opencv_inverse_fourier", opencv_inverse_fourier);
 
-        cv::waitKey();
-
-        cv::imwrite(std::string(RESULTS_DIR) + std::string("task_1_img_") + fnm, img);
-        cv::imwrite(std::string(RESULTS_DIR) + std::string("task_1_custom_fourier_") + fnm, custom_pretty_fourier);
-        cv::imwrite(std::string(RESULTS_DIR) + std::string("task_1_opencv_fourier_") + fnm, opencv_pretty_fourier);
-        cv::imwrite(std::string(RESULTS_DIR) + std::string("task_1_custom_inverse_fourier_") + fnm, custom_inverse_fourier);
-        cv::imwrite(std::string(RESULTS_DIR) + std::string("task_1_opencv_inverse_fourier_") + fnm, opencv_inverse_fourier);
-        
+        cv::waitKey();        
     }
     cv::destroyAllWindows();
 }
@@ -234,15 +234,7 @@ void task_2() {
         cv::imshow("custom_inverse_fourier", custom_inverse_fourier);
         cv::imshow("opencv_inverse_fourier", opencv_inverse_fourier);
 
-        cv::waitKey();
-
-        
-        cv::imwrite(std::string(RESULTS_DIR) + std::string("task_2_img_") + fnm, img);
-        cv::imwrite(std::string(RESULTS_DIR) + std::string("task_2_custom_fourier_") + fnm, img);
-        cv::imwrite(std::string(RESULTS_DIR) + std::string("task_2_opencv_fourier_") + fnm, img);
-        cv::imwrite(std::string(RESULTS_DIR) + std::string("task_2_custom_inverse_fourier_") + fnm, img);
-        cv::imwrite(std::string(RESULTS_DIR) + std::string("task_2_opencv_inverse_fourier_") + fnm, img);
-        
+        cv::waitKey();        
     }
     cv::destroyAllWindows();
 }
@@ -305,7 +297,7 @@ void task_4() {
                                 -2, 0, 2,
                                 -1, 0, 1,};
         cv::Mat vsobel(3, 3, CV_64F, vsobel_data);
-        mulSpectrumShow(orig_img, vsobel, "vertical_sobel", fnm);
+        mulSpectrumShow(orig_img, vsobel);
 
         // Horizontal Sobel
         std::cout << "Horizontal Sobel calculation" << "\n";
@@ -313,12 +305,12 @@ void task_4() {
                                 0, 0, 0,
                                 1, 2, 1,};
         cv::Mat hsobel(3, 3, CV_64F, hsobel_data);
-        mulSpectrumShow(orig_img, hsobel, "horizontal_sobel", fnm);
+        mulSpectrumShow(orig_img, hsobel);
 
         // Box Filter
         std::cout << "Box Filter calculation" << "\n";
         cv::Mat box_filter(3, 3, CV_64F, 1.0 / 9.0);
-        mulSpectrumShow(orig_img, box_filter, "box_filter", fnm);
+        mulSpectrumShow(orig_img, box_filter);
 
         // Laplace
         std::cout << "Laplace calculation" << "\n";
@@ -326,7 +318,7 @@ void task_4() {
                                 -1, 4, -1,
                                 0, -1, 0,};
         cv::Mat laplace(3, 3, CV_64F, laplace_data);
-        mulSpectrumShow(orig_img, laplace, "laplace", fnm);
+        mulSpectrumShow(orig_img, laplace);
 
         std::cout << '\n';
     }
@@ -438,10 +430,11 @@ void task_6() {
     cv::destroyAllWindows();
 }
 
-void mulSpectrumShow(cv::InputArray orig_img, cv::InputArray filter, std::string filter_name, std::string file_name) {
+void mulSpectrumShow(cv::InputArray orig_img, cv::InputArray filter) {
     
     cv::Size orig_img_size(orig_img.cols(), orig_img.rows());
     cv::Mat img, filter_mat;
+
     PrepareForMullSpectrum(orig_img, filter, img, filter_mat);
 
     cv::Mat img_fourier;
@@ -458,23 +451,15 @@ void mulSpectrumShow(cv::InputArray orig_img, cv::InputArray filter, std::string
     filtered_img = filtered_img(cv::Rect(0, 0, orig_img_size.width, orig_img_size.height));
     filtered_img.convertTo(filtered_img, CV_8U);
 
-    cv::imshow("img", orig_img);
+    cv::Mat vis_img;
+    orig_img.getMat().convertTo(vis_img, CV_8U);
+
+    cv::imshow("img", vis_img);
     cv::imshow("img_fourier", getPrettyFourier(img_fourier));
     cv::imshow("filter_fourier", getPrettyFourier(filter_fourier));
     cv::imshow("filtered_img_fourier", getPrettyFourier(filtered_img_fourier));
     cv::imshow("filtered_img", filtered_img);
     cv::waitKey();
-
-    cv::imwrite(std::string(RESULTS_DIR) + std::string("task_4_img__") + filter_name + std::string("_") + file_name, 
-                orig_img);
-    cv::imwrite(std::string(RESULTS_DIR) + std::string("task_4_img_fourier_") + filter_name + std::string("_") + file_name, 
-                getPrettyFourier(img_fourier));
-    cv::imwrite(std::string(RESULTS_DIR) + std::string("task_4_filter_fourier_") + filter_name + std::string("_") + file_name, 
-                getPrettyFourier(filter_fourier));
-    cv::imwrite(std::string(RESULTS_DIR) + std::string("task_4_filtered_img_fourier_") + filter_name + std::string("_") + file_name, 
-                getPrettyFourier(filtered_img_fourier));
-    cv::imwrite(std::string(RESULTS_DIR) + std::string("task_4_filtered_img_") + filter_name + std::string("_") + file_name, 
-                filtered_img);    
 }
 
 
